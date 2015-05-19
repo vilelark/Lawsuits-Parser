@@ -1,5 +1,4 @@
 import urllib2
-import urllib
 from bs4 import BeautifulSoup
 
 
@@ -38,14 +37,15 @@ for d in range(len(ls_startdate)):
 		
 		for link in Result.find_all('a'):
 			
-			openlink = urllib.urlopen('https://www.patexia.com'+link.get('href'))
+			openlink = urllib2.urlopen('https://www.patexia.com'+link.get('href'))
 			k = openlink.read()
 			soup2 = BeautifulSoup(k)
 
 			LawsuitsResult = soup2.body.find('div',attrs={'class':'lawsuitDocuments clearfix'})
 			DefendantResult = soup2.body.find('div',attrs={'id':'middleCol'})
 
-			try:			
+			try:
+				'''Lawsuits Info'''		
 				LawsuitsTitle = DefendantResult.h1.text.strip('> Summary')
 
 				CourtCastNumber = LawsuitsResult.p.text.strip('Court Cast Number')
@@ -57,17 +57,11 @@ for d in range(len(ls_startdate)):
 				print LawsuitsTitle,'|',
 
 				pass
-			except(TypeError):
-				break
 			except Exception, e:
 				break		
-			else:
-				pass
-			finally:
-				pass
 			
-
-			try:	
+			try:
+				'''Plaintiff'''
 				Plaintiff = LawsuitsResult.div.next_sibling.next_sibling
 				Plaintiff = Plaintiff.p.text.strip()
 				print Plaintiff,'|',
@@ -75,12 +69,7 @@ for d in range(len(ls_startdate)):
 			except Exception, e:
 				print '|',
 				pass
-			else:
-				pass
-			finally:
-				pass
-
-
+			
 			try:
 				'''Defendant'''
 				defendant = DefendantResult.div.next_sibling.next_sibling
@@ -99,14 +88,9 @@ for d in range(len(ls_startdate)):
 			except Exception, e:
 				print '|',
 				pass
-			else:
-				pass
-			finally:
-				pass
-
 			
-
 			try:
+				'''docNum'''
 				docNum = soup2.body.find('table',attrs={'class':'adminTable'})
 
 				for link in docNum.find_all('a'):
@@ -117,14 +101,6 @@ for d in range(len(ls_startdate)):
 				pass
 			except Exception, e:
 				pass
-			else: 
-				pass
-			finally:
-				pass
-
+			
 			seq = seq + 1
 			print ''
-
-	
-
-
