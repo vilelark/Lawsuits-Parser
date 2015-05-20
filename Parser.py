@@ -1,9 +1,14 @@
 import urllib2
 from bs4 import BeautifulSoup
 
+ls_year = '2010'
 
-ls_startdate = ['2014-1-1','2014-2-1','2014-3-1','2014-4-1','2014-5-1','2014-6-1','2014-7-1','2014-8-1','2014-9-1','2014-10-1','2014-11-1','2014-12-1']
-ls_enddate = ['2014-1-31','2014-2-28','2014-3-31','2014-4-30','2014-5-31','2014-6-30','2014-7-31','2014-8-31','2014-9-30','2014-10-31','2014-11-30','2014-12-31']
+if int(ls_year) % 400 == 0:
+	ls_startdate = ['-1-1','-2-1','-3-1','-4-1','-5-1','-6-1','-7-1','-8-1','-9-1','-10-1','-11-1','-12-1']
+	ls_enddate = ['-1-31','-2-29','-3-31','-4-30','-5-31','-6-30','-7-31','-8-31','-9-30','-10-31','-11-30','-12-31']
+else:
+	ls_startdate = ['-1-1','-2-1','-3-1','-4-1','-5-1','-6-1','-7-1','-8-1','-9-1','-10-1','-11-1','-12-1']
+	ls_enddate = ['-1-31','-2-28','-3-31','-4-30','-5-31','-6-30','-7-31','-8-31','-9-30','-10-31','-11-30','-12-31']
 
 
 ls_date =[ls_startdate,ls_enddate]
@@ -11,7 +16,7 @@ ls_date =[ls_startdate,ls_enddate]
 
 for d in range(len(ls_startdate)):
 
-	openlink = urllib2.urlopen('https://www.patexia.com/ip-research/lawsuits?type%5B0%5D=1&showDateField=filingDate&showCharts=1&startFilingDateRange='+ls_date[0][d]+'&endFilingDateRange='+ls_date[1][d]+'&page=1')
+	openlink = urllib2.urlopen('https://www.patexia.com/ip-research/lawsuits?type%5B0%5D=1&showDateField=filingDate&showCharts=1&startFilingDateRange='+ls_year+ls_date[0][d]+'&endFilingDateRange='+ls_year+ls_date[1][d]+'&page=1')
 	x = openlink.read()
 
 	soup = BeautifulSoup(x)
@@ -21,15 +26,13 @@ for d in range(len(ls_startdate)):
 	import math
 	totalPageNum = totalPageNum.replace(',','')
 
-	'''print totalPageNum'''
-
 	totalPageNum = int(totalPageNum)/20.0
 	totalPageNum = math.ceil(totalPageNum)
 
 	seq = 1
 
 	for page in range(1,int(totalPageNum)+1):
-		openlink = urllib2.urlopen('https://www.patexia.com/ip-research/lawsuits?type%5B0%5D=1&showDateField=filingDate&showCharts=1&startFilingDateRange='+ls_date[0][d]+'&endFilingDateRange='+ls_date[1][d]+'&page='+str(page))
+		openlink = urllib2.urlopen('https://www.patexia.com/ip-research/lawsuits?type%5B0%5D=1&showDateField=filingDate&showCharts=1&startFilingDateRange='+ls_year+ls_date[0][d]+'&endFilingDateRange='+ls_year+ls_date[1][d]+'&page='+str(page))
 		x = openlink.read()
 
 		soup = BeautifulSoup(x)
@@ -62,9 +65,21 @@ for d in range(len(ls_startdate)):
 			
 			try:
 				'''Plaintiff'''
-				Plaintiff = LawsuitsResult.div.next_sibling.next_sibling
-				Plaintiff = Plaintiff.p.text.strip()
-				print Plaintiff,'|',
+				PlaintiffResult = LawsuitsResult.find('div',attrs={'class':'patentsSummaryBox clearfix'})
+
+				PlaintiffResult = PlaintiffResult.next_sibling.next_sibling
+
+				sum_plaintiff = PlaintiffResult.find('div',attrs={'class':'patentsSummaryTxt clearfix'})
+				sub_plaintiff = PlaintiffResult.find('div',attrs={'class':'patentsSummarySubTxt clearfix'})
+
+				sum_plaintiff = sum_plaintiff.text.strip()
+				print sum_plaintiff,';',
+
+				sub_plaintiff = sub_plaintiff.text.lstrip()
+				sub_plaintiff = sub_plaintiff.rstrip()
+				sub_plaintiff = sub_plaintiff.replace('\n',';')
+
+				print sub_plaintiff,'|',
 
 			except Exception, e:
 				print '|',
