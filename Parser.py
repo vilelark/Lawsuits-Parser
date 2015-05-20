@@ -1,7 +1,9 @@
 import urllib2
 from bs4 import BeautifulSoup
 
-ls_year = '2010'
+'''ls_year = '2010'''
+
+ls_year = raw_input('please input a year... ')
 
 if int(ls_year) % 400 == 0:
 	ls_startdate = ['-1-1','-2-1','-3-1','-4-1','-5-1','-6-1','-7-1','-8-1','-9-1','-10-1','-11-1','-12-1']
