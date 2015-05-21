@@ -1,16 +1,18 @@
 import urllib2
 from bs4 import BeautifulSoup
 
-'''ls_year = '2010'''
 
 ls_year = raw_input('please input a year... ')
 
-if int(ls_year) % 400 == 0:
+intYear = int(ls_year)
+
+if intYear % 400 == 0 or intYear % 4 == 0 and intYear % 100 != 0 and intYear % 4000 != 0:
 	ls_startdate = ['-1-1','-2-1','-3-1','-4-1','-5-1','-6-1','-7-1','-8-1','-9-1','-10-1','-11-1','-12-1']
 	ls_enddate = ['-1-31','-2-29','-3-31','-4-30','-5-31','-6-30','-7-31','-8-31','-9-30','-10-31','-11-30','-12-31']
 else:
 	ls_startdate = ['-1-1','-2-1','-3-1','-4-1','-5-1','-6-1','-7-1','-8-1','-9-1','-10-1','-11-1','-12-1']
 	ls_enddate = ['-1-31','-2-28','-3-31','-4-30','-5-31','-6-30','-7-31','-8-31','-9-30','-10-31','-11-30','-12-31']
+
 
 ls_date =[ls_startdate,ls_enddate]
 
@@ -42,9 +44,15 @@ with open(ls_year+'_lawsuits.txt','w') as f:
 			
 			for link in Result.find_all('a'):
 				
-				openlink = urllib2.urlopen('https://www.patexia.com'+link.get('href'))
-				k = openlink.read()
-				soup2 = BeautifulSoup(k)
+				try:
+					openlink = urllib2.urlopen('https://www.patexia.com'+link.get('href'))
+					k = openlink.read()
+					soup2 = BeautifulSoup(k)
+				except Exception,e:
+					print '--|Loss'
+					f.write('--|Loss\n')
+					continue
+					
 
 				LawsuitsResult = soup2.body.find('div',attrs={'class':'lawsuitDocuments clearfix'})
 				DefendantResult = soup2.body.find('div',attrs={'id':'middleCol'})
